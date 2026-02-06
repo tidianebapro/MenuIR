@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MenuIR - Menu immersif</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="video-layer" aria-hidden="true">
+      <div class="video-embed" id="videoEmbed"></div>
+      <div class="video-overlay"></div>
+    </div>
+
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-title">MenuIR</span>
+        <span class="brand-subtitle">Menu immersif</span>
+      </div>
+      <button class="vegan-filter" id="veganFilter" aria-pressed="false">Vegan</button>
+    </header>
+
+    <nav class="categories" id="categories" aria-label="Catégories"></nav>
+
+    <main class="content">
+      <section class="slider" id="dishSlider" aria-label="Plats"></section>
+    </main>
+
+    <button class="bill-button" id="billButton">Demander l'addition</button>
+
+    <aside class="dish-card" id="dishCard" aria-live="polite">
+      <button class="close-card" id="closeCard" aria-label="Fermer">×</button>
+      <div class="dish-card-body" id="dishCardBody"></div>
+    </aside>
+
+    <div class="modal" id="billModal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-content">
+        <h2>Demander l'addition</h2>
+        <p>Indiquez votre numéro de table pour prévenir le restaurant.</p>
+        <label for="tableNumber">Numéro de table</label>
+        <input type="text" id="tableNumber" placeholder="Ex: 12" />
+        <div class="modal-actions">
+          <button class="secondary" id="closeModal">Annuler</button>
+          <button class="primary" id="submitBill">Envoyer</button>
+        </div>
+        <p class="modal-status" id="modalStatus" role="status"></p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
