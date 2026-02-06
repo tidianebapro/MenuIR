@@ -1,4 +1,6 @@
-const data = [
+const STORAGE_KEY = "menuirData";
+
+const defaultData = [
   {
     id: "pizza",
     name: "Pizza",
@@ -93,6 +95,21 @@ const submitBillBtn = document.getElementById("submitBill");
 const tableNumberInput = document.getElementById("tableNumber");
 const modalStatus = document.getElementById("modalStatus");
 
+const getStoredData = () => {
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+    return defaultData;
+  }
+  try {
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) && parsed.length ? parsed : defaultData;
+  } catch (error) {
+    return defaultData;
+  }
+};
+
+let data = getStoredData();
 let activeCategory = data[0];
 let filterVegan = false;
 
@@ -162,9 +179,9 @@ const openDish = (dish) => {
   setVideo(dish);
   cardBodyEl.innerHTML = `
     <h2>${dish.name}</h2>
-    <span class="price">${dish.price}</span>
+    <span class="price">${dish.price || "Prix à définir"}</span>
     ${dish.vegan ? '<span class="badge">🌿 Vegan</span>' : ""}
-    <p class="ingredients">${dish.ingredients}</p>
+    <p class="ingredients">${dish.ingredients || "Ingrédients à définir."}</p>
   `;
   cardEl.classList.add("open");
 };
@@ -225,6 +242,22 @@ submitBillBtn.addEventListener("click", () => {
   }, 1200);
 });
 
-renderCategories();
-renderDishes();
-openDish(activeCategory.dishes[0]);
+const refreshData = () => {
+  data = getStoredData();
+  activeCategory =
+    data.find((category) => category.id === activeCategory?.id) || data[0];
+  renderCategories();
+  renderDishes();
+  const firstDish = activeCategory?.dishes?.[0];
+  if (firstDish) {
+    openDish(firstDish);
+  }
+};
+
+window.addEventListener("storage", (event) => {
+  if (event.key === STORAGE_KEY) {
+    refreshData();
+  }
+});
+
+refreshData();
