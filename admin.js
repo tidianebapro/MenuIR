@@ -1,20 +1,106 @@
-const categories = [
+const STORAGE_KEY = "menuirData";
+
+const defaultCategories = [
   {
     id: "pizza",
     name: "Pizza",
-    dishes: ["Margherita", "Verdura grillée"],
+    dishes: [
+      {
+        id: "margherita",
+        name: "Margherita",
+        price: "12 €",
+        ingredients: "Tomate San Marzano, mozzarella fior di latte, basilic frais.",
+        vegan: false,
+        thumbnail:
+          "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "5K8U4y5wM0U",
+      },
+      {
+        id: "verdura",
+        name: "Verdura grillée",
+        price: "13 €",
+        ingredients: "Poivrons rôtis, courgettes, oignons rouges, pesto vegan.",
+        vegan: true,
+        thumbnail:
+          "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "E8gmARGvPlI",
+      },
+    ],
   },
   {
     id: "burger",
     name: "Burger",
-    dishes: ["Smoky BBQ", "Green Avocado"],
+    dishes: [
+      {
+        id: "smoky",
+        name: "Smoky BBQ",
+        price: "15 €",
+        ingredients: "Boeuf maturé, cheddar affiné, sauce BBQ maison.",
+        vegan: false,
+        thumbnail:
+          "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "gVZ2KxL4r1M",
+      },
+      {
+        id: "green",
+        name: "Green Avocado",
+        price: "14 €",
+        ingredients: "Steak végétal, avocat, pickles, mayo vegan.",
+        vegan: true,
+        thumbnail:
+          "https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "SQHcA4Uj6T0",
+      },
+    ],
   },
   {
     id: "pasta",
     name: "Pâtes",
-    dishes: ["Crème de truffe", "Méditerranéennes"],
+    dishes: [
+      {
+        id: "truffle",
+        name: "Crème de truffe",
+        price: "18 €",
+        ingredients: "Tagliatelles fraîches, crème, copeaux de truffe noire.",
+        vegan: false,
+        thumbnail:
+          "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "B1J6Ou4q8vE",
+      },
+      {
+        id: "mediterranean",
+        name: "Méditerranéennes",
+        price: "16 €",
+        ingredients: "Pesto basilic, tomates confites, roquette, citron.",
+        vegan: true,
+        thumbnail:
+          "https://images.unsplash.com/photo-1506354666786-959d6d497f1a?auto=format&fit=crop&w=600&q=80",
+        youtubeId: "H_jK4sqa4y8",
+      },
+    ],
   },
 ];
+
+const loadCategories = () => {
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (!stored) return defaultCategories;
+  try {
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) && parsed.length ? parsed : defaultCategories;
+  } catch (error) {
+    return defaultCategories;
+  }
+};
+
+const saveCategories = () => {
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(categories));
+};
+
+const categories = loadCategories();
+
+if (!window.localStorage.getItem(STORAGE_KEY)) {
+  saveCategories();
+}
 
 const categoryList = document.getElementById("categoryList");
 const categorySelect = document.getElementById("categorySelect");
@@ -57,7 +143,7 @@ const renderDishes = () => {
   if (!current) return;
   current.dishes.forEach((dish, index) => {
     dishList.appendChild(
-      buildDragItem(dish, () => removeDish(current.id, index))
+      buildDragItem(dish.name, () => removeDish(current.id, index))
     );
   });
 };
@@ -66,6 +152,7 @@ const removeCategory = (id) => {
   const index = categories.findIndex((category) => category.id === id);
   if (index >= 0) {
     categories.splice(index, 1);
+    saveCategories();
     renderCategories();
   }
 };
@@ -74,6 +161,7 @@ const removeDish = (categoryId, dishIndex) => {
   const category = categories.find((c) => c.id === categoryId);
   if (!category) return;
   category.dishes.splice(dishIndex, 1);
+  saveCategories();
   renderDishes();
 };
 
@@ -106,6 +194,7 @@ const updateOrderFromList = (list) => {
     categories.sort(
       (a, b) => newOrder.indexOf(a.name) - newOrder.indexOf(b.name)
     );
+    saveCategories();
     renderCategories();
   } else if (list === dishList) {
     const current = categories.find((c) => c.id === categorySelect.value);
@@ -113,7 +202,10 @@ const updateOrderFromList = (list) => {
     const newOrder = [...dishList.querySelectorAll("li span")].map(
       (item) => item.textContent
     );
-    current.dishes = newOrder;
+    current.dishes = newOrder
+      .map((name) => current.dishes.find((dish) => dish.name === name))
+      .filter(Boolean);
+    saveCategories();
     renderDishes();
   }
 };
@@ -122,6 +214,7 @@ addCategoryBtn.addEventListener("click", () => {
   const name = newCategoryInput.value.trim();
   if (!name) return;
   categories.push({ id: name.toLowerCase(), name, dishes: [] });
+  saveCategories();
   newCategoryInput.value = "";
   renderCategories();
 });
@@ -130,7 +223,17 @@ addDishBtn.addEventListener("click", () => {
   const name = newDishInput.value.trim();
   const current = categories.find((c) => c.id === categorySelect.value);
   if (!name || !current) return;
-  current.dishes.push(name);
+  current.dishes.push({
+    id: name.toLowerCase().replace(/\s+/g, "-"),
+    name,
+    price: "Prix à définir",
+    ingredients: "Ingrédients à définir.",
+    vegan: false,
+    thumbnail:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80",
+    youtubeId: "5K8U4y5wM0U",
+  });
+  saveCategories();
   newDishInput.value = "";
   renderDishes();
 });

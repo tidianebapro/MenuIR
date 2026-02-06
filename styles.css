@@ -120,10 +120,10 @@ body {
 .content {
   position: relative;
   z-index: 2;
-  padding: 0 1.5rem;
+  padding: 0 1.5rem 4.5rem;
   height: calc(100vh - 180px);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .slider {
@@ -205,20 +205,20 @@ body {
 .dish-card {
   position: fixed;
   top: 50%;
-  right: 1.2rem;
-  transform: translateY(-50%) translateX(120%);
+  left: 50%;
+  transform: translate(-50%, -50%) translateX(120%);
   z-index: 4;
-  width: min(320px, 85vw);
+  width: min(280px, 80vw);
   background: var(--card-bg);
-  border-radius: 20px;
-  padding: 1.5rem;
+  border-radius: 18px;
+  padding: 1.2rem;
   border: 1px solid var(--border);
   backdrop-filter: blur(12px);
   transition: transform 0.3s ease;
 }
 
 .dish-card.open {
-  transform: translateY(-50%) translateX(0);
+  transform: translate(-50%, -50%) translateX(0);
 }
 
 .close-card {
@@ -334,9 +334,6 @@ body {
 @media (max-width: 600px) {
   .content {
     height: calc(100vh - 200px);
-  }
-
-  .dish-card {
-    right: 0.75rem;
+    padding-bottom: 5rem;
   }
 }
