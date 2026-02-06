@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MenuIR Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div>
+        <h1>Dashboard restaurateur</h1>
+        <p>Gestion du menu, analytics et notifications.</p>
+      </div>
+      <span class="status-pill">Instance : Restaurant Demo</span>
+    </header>
+
+    <main class="admin-grid">
+      <section class="panel">
+        <h2>Catégories</h2>
+        <p class="panel-subtitle">Glissez-déposez pour réorganiser.</p>
+        <ul class="drag-list" id="categoryList"></ul>
+        <div class="panel-actions">
+          <input type="text" id="newCategory" placeholder="Nouvelle catégorie" />
+          <button id="addCategory">Ajouter</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Plats</h2>
+        <p class="panel-subtitle">Sélectionnez une catégorie puis réorganisez les plats.</p>
+        <select id="categorySelect"></select>
+        <ul class="drag-list" id="dishList"></ul>
+        <div class="panel-actions">
+          <input type="text" id="newDish" placeholder="Nouveau plat" />
+          <button id="addDish">Ajouter</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Analytics</h2>
+        <div class="analytics">
+          <div class="metric">
+            <h3>Vues totales</h3>
+            <p id="totalViews">1 248</p>
+          </div>
+          <div class="metric">
+            <h3>Taux de clic</h3>
+            <p id="clickRate">38 %</p>
+          </div>
+          <div class="metric">
+            <h3>Temps moyen / plat</h3>
+            <p id="avgTime">21 s</p>
+          </div>
+        </div>
+        <h3 class="panel-subtitle">Top plats consultés</h3>
+        <ol id="topDishes" class="top-list"></ol>
+      </section>
+
+      <section class="panel">
+        <h2>Notifications</h2>
+        <p class="panel-subtitle">Demandes d'addition en temps réel.</p>
+        <ul id="notifications" class="notification-list"></ul>
+      </section>
+    </main>
+
+    <script src="admin.js"></script>
+  </body>
+</html>
